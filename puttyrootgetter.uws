@@ -1,0 +1,61 @@
+//このファイルはlinuxサーバーにログインしてルートに昇格してフォルダ移動して
+//test.cをコンパイルして実行するためだけのuwscスクリプトです
+//すでにputtyが起動している場合はコンパイルして実行するだけです
+//対話的なパスワード入力とかのコマンドはpchk()使って文字列を検出してから入力します。やったねたえちゃん！
+
+//puttyのログファイルの場所。putty側で全セッションのログを取るようにせってへんこする
+public plog = "E:\program01\putty-gdi-20130807\x64\putty.log"
+
+//puttyの実行コマンド　↓のようにプロファイルを指定する
+public putty = "E:\program01\putty-gdi-20130807\x64\putty.exe -load usconf"
+
+//puttyのアクティブバー？に表れてる文字。一部でも構わないです
+public barmoji = "watashi@jintai.com: ~"
+
+//その他再設定が必要っぽいところはL28-L32,L37
+
+
+
+public fileID //puttyのログファイルのID入る予定
+public id //puttyのwindowID入る予定
+nowactive = GETID(GET_ACTIVE_WIN)//(1)
+id = getid(barmoji)
+ifb id < 0
+  exec(putty)
+  while id < 0
+    id = getid(barmoji)
+    sleep(0.01)
+  wend
+  mouseorg(id, 2)
+  //こっからコマンド入力
+  psd("su -<#CR>")
+  pchk("パスワード")//サーバー側の環境設定が英語の場合は"password"に変更
+  psd("あなたのパスワード<#CR>")
+  pchk("root")
+  psd("cd /mydocs/;gcc socket01.c;./a.out<#CR>")
+  //ここまで
+else
+  mouseorg(id, 2)
+  //もうすでに起動してる場合のコマンド入力
+  psd("gcc socket01.c;./a.out<#CR>")
+  //ここまで
+endif
+CTRLWIN( nowactive,ACTIVATE )//アクティブウィンドウを戻す。いらない人は(1)も削除
+
+
+Procedure pchk(moji) //puttyに引数の文字列が出現するまで待機
+REPEAT
+    fileID = FOPEN(plog,F_READ)
+	maxLine = FGET(fileID, F_LINECOUNT)
+	mojiretu = FGET(fileID,maxLine)
+	arukazu = POS(moji,mojiretu)
+	sleep(0.01)
+UNTIL arukazu > 0
+fend
+
+
+procedure psd(moji) //puttyに引数の文字列を送る
+SendStr(id, moji)
+fend
+  
+
