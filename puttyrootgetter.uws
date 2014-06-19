@@ -12,8 +12,7 @@ public putty = "E:\program01\putty-gdi-20130807\x64\putty.exe -load usconf"
 //puttyのアクティブバー？に表れてる文字。一部でも構わないです
 public barmoji = "watashi@jintai.com: ~"
 
-//その他再設定が必要っぽいところはL28-L32,L37
-
+//その他再設定が必要っぽいところはL30-L34,L39
 
 
 public fileID //puttyのログファイルのID入る予定
@@ -42,7 +41,6 @@ else
 endif
 CTRLWIN( nowactive,ACTIVATE )//アクティブウィンドウを戻す。いらない人は(1)も削除
 
-
 Procedure pchk(moji) //puttyに引数の文字列が出現するまで待機
 REPEAT
     fileID = FOPEN(plog,F_READ)
@@ -52,7 +50,6 @@ REPEAT
 	sleep(0.01)
 UNTIL arukazu > 0
 fend
-
 
 procedure psd(moji) //puttyに引数の文字列を送る
 SendStr(id, moji)
